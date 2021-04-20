@@ -9,10 +9,12 @@
       "remotePath": "",
       "program": "${workspaceRoot}/cmd/helm-operator/main.go",
       "args": [
-        "--kubeconfig=${workspaceRoot}/.vscode/kubeconfig.yml"
+        "run",
+        "--watches-file=${workspaceRoot}/.vscode/watches.yaml"
       ],
       "env": {
-        // "HTTP_PROXY": "http://127.0.0.1:8888"
+        // "HTTP_PROXY": "http://127.0.0.1:8888",
+        "KUBECONFIG": "${workspaceRoot}/.vscode/kubeconfig.yml"
       },
       "showLog": true
     }

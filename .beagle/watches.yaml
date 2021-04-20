@@ -1,0 +1,22 @@
+# Use the 'create api' subcommand to add watches to this file.
+- group: install.bd-apaas.com
+  version: v1
+  kind: BeagleCloud
+  chart: /go/src/gitlab.wodcloud.com/cloud/awecloud-helm-operator/helm-charts/beagle-cloud
+- group: install.bd-apaas.com
+  version: v1
+  kind: BeagleHarbor
+  chart: /go/src/gitlab.wodcloud.com/cloud/awecloud-helm-operator/helm-charts/beagle-harbor
+- group: install.bd-apaas.com
+  version: v1
+  kind: BeaglePrometheus
+  chart: /go/src/gitlab.wodcloud.com/cloud/awecloud-helm-operator/helm-charts/beagle-prometheus
+- group: install.bd-apaas.com
+  version: v1
+  kind: BeagleIstio
+  chart: /go/src/gitlab.wodcloud.com/cloud/awecloud-helm-operator/helm-charts/beagle-istio
+- group: install.bd-apaas.com
+  version: v1
+  kind: HostpathProvisioner
+  chart: /go/src/gitlab.wodcloud.com/cloud/awecloud-helm-operator/helm-charts/hostpath-provisioner
+#+kubebuilder:scaffold:watch
