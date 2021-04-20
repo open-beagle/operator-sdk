@@ -10,5 +10,5 @@ git merge v1.6.x
 ## build
 
 ```bash
-
+git apply .beagle/20210421-helm-compare.patch
 ```

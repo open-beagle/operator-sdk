@@ -1,0 +1,160 @@
+From d8cc1eb04d3b368505f2c4802424e25d04139239 Mon Sep 17 00:00:00 2001
+From: shucheng <shucheng@bd-apaas.com>
+Date: Wed, 21 Apr 2021 00:56:24 +0800
+Subject: [PATCH] helm compare
+
+---
+ internal/helm/controller/reconcile.go | 26 +++++++++++++------
+ internal/helm/internal/types/types.go |  4 +--
+ internal/helm/release/manager.go      | 36 ++++++++++++++++++++++++++-
+ 3 files changed, 55 insertions(+), 11 deletions(-)
+
+diff --git a/internal/helm/controller/reconcile.go b/internal/helm/controller/reconcile.go
+index 3917f86d..16d33ef8 100644
+--- a/internal/helm/controller/reconcile.go
++++ b/internal/helm/controller/reconcile.go
+@@ -16,6 +16,7 @@ package controller
+ 
+ import (
+ 	"context"
++	"encoding/json"
+ 	"errors"
+ 	"fmt"
+ 	"strconv"
+@@ -155,9 +156,9 @@ func (r HelmOperatorReconciler) Reconcile(ctx context.Context, request reconcile
+ 			return reconcile.Result{}, err
+ 		}
+ 
+-		if wait && status.DeployedRelease != nil && status.DeployedRelease.Manifest != "" {
++		if wait && status.DeployedRelease != nil && status.DeployedRelease.Config != "" {
+ 			log.Info("Uninstall wait")
+-			isAllResourcesDeleted, err := manager.CleanupRelease(ctx, status.DeployedRelease.Manifest)
++			isAllResourcesDeleted, err := manager.CleanupRelease(ctx, manager.GetDeployedManifest())
+ 			if err != nil {
+ 				log.Error(err, "Failed to cleanup release")
+ 				status.SetCondition(types.HelmAppCondition{
+@@ -267,8 +268,8 @@ func (r HelmOperatorReconciler) Reconcile(ctx context.Context, request reconcile
+ 			Message: message,
+ 		})
+ 		status.DeployedRelease = &types.HelmAppRelease{
+-			Name:     installedRelease.Name,
+-			Manifest: installedRelease.Manifest,
++			Name:   installedRelease.Name,
++			Config: getDeployReleaseConfig(installedRelease),
+ 		}
+ 		err = r.updateResourceStatus(ctx, o, status)
+ 		return reconcile.Result{RequeueAfter: r.ReconcilePeriod}, err
+@@ -330,8 +331,8 @@ func (r HelmOperatorReconciler) Reconcile(ctx context.Context, request reconcile
+ 			Message: message,
+ 		})
+ 		status.DeployedRelease = &types.HelmAppRelease{
+-			Name:     upgradedRelease.Name,
+-			Manifest: upgradedRelease.Manifest,
++			Name:   upgradedRelease.Name,
++			Config: getDeployReleaseConfig(upgradedRelease),
+ 		}
+ 		err = r.updateResourceStatus(ctx, o, status)
+ 		return reconcile.Result{RequeueAfter: r.ReconcilePeriod}, err
+@@ -384,8 +385,8 @@ func (r HelmOperatorReconciler) Reconcile(ctx context.Context, request reconcile
+ 		Message: message,
+ 	})
+ 	status.DeployedRelease = &types.HelmAppRelease{
+-		Name:     expectedRelease.Name,
+-		Manifest: expectedRelease.Manifest,
++		Name:   expectedRelease.Name,
++		Config: getDeployReleaseConfig(expectedRelease),
+ 	}
+ 	err = r.updateResourceStatus(ctx, o, status)
+ 	return reconcile.Result{RequeueAfter: r.ReconcilePeriod}, err
+@@ -437,3 +438,12 @@ func (r HelmOperatorReconciler) waitForDeletion(ctx context.Context, o client.Ob
+ 		return false, nil
+ 	}, tctx.Done())
+ }
++
++func getDeployReleaseConfig(deployedRelease *rpb.Release) string {
++	a, err := json.Marshal(deployedRelease.Config)
++	if err != nil {
++		return ""
++	}
++
++	return string(a)
++}
+diff --git a/internal/helm/internal/types/types.go b/internal/helm/internal/types/types.go
+index b816b57b..506ea6c6 100644
+--- a/internal/helm/internal/types/types.go
++++ b/internal/helm/internal/types/types.go
+@@ -51,8 +51,8 @@ type HelmAppCondition struct {
+ }
+ 
+ type HelmAppRelease struct {
+-	Name     string `json:"name,omitempty"`
+-	Manifest string `json:"manifest,omitempty"`
++	Name   string `json:"name,omitempty"`
++	Config string `json:"config,omitempty"`
+ }
+ 
+ const (
+diff --git a/internal/helm/release/manager.go b/internal/helm/release/manager.go
+index 2d494f42..9ebf638b 100644
+--- a/internal/helm/release/manager.go
++++ b/internal/helm/release/manager.go
+@@ -57,6 +57,7 @@ type Manager interface {
+ 	ReconcileRelease(context.Context) (*rpb.Release, error)
+ 	UninstallRelease(context.Context, ...UninstallOption) (*rpb.Release, error)
+ 	CleanupRelease(context.Context, string) (bool, error)
++	GetDeployedManifest() string
+ }
+ 
+ type manager struct {
+@@ -130,10 +131,17 @@ func (m *manager) Sync(ctx context.Context) error {
+ 	if err != nil {
+ 		return fmt.Errorf("failed to get candidate release: %w", err)
+ 	}
+-	if deployedRelease.Manifest != candidateRelease.Manifest {
++
++	// if deployedRelease.Manifest != candidateRelease.Manifest {
++	// 	m.isUpgradeRequired = true
++	// }
++
++	if !compareHelmRelease(deployedRelease, candidateRelease) {
+ 		m.isUpgradeRequired = true
+ 	}
+ 
++	deployedRelease.Manifest = candidateRelease.Manifest
++
+ 	return nil
+ }
+ 
+@@ -414,3 +422,29 @@ func (m manager) CleanupRelease(ctx context.Context, manifest string) (bool, err
+ 	}
+ 	return true, nil
+ }
++
++func (m manager) GetDeployedManifest() string {
++	return m.deployedRelease.Manifest
++}
++
++func compareHelmRelease(deployedRelease *rpb.Release, candidateRelease *rpb.Release) bool {
++	a, err := json.Marshal(deployedRelease.Config)
++	if err != nil {
++		return false
++	}
++
++	b, err := json.Marshal(candidateRelease.Config)
++	if err != nil {
++		return false
++	}
++
++	if string(a) != string(b) {
++		return false
++	}
++
++	if deployedRelease.Chart.AppVersion() != candidateRelease.Chart.AppVersion() {
++		return false
++	}
++
++	return true
++}
+-- 
+2.25.1
+
