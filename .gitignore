@@ -132,3 +132,4 @@ tags
 test/ansible/plugins/filter/__pycache__/
 vendor/
 .vscode
+__debug_bin
