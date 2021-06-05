@@ -1,13 +1,13 @@
-From d8cc1eb04d3b368505f2c4802424e25d04139239 Mon Sep 17 00:00:00 2001
+From 4aef1e83cc7bf350f04386d2e3c5e31914e5f756 Mon Sep 17 00:00:00 2001
 From: shucheng <shucheng@bd-apaas.com>
-Date: Wed, 21 Apr 2021 00:56:24 +0800
-Subject: [PATCH] helm compare
+Date: Sat, 5 Jun 2021 23:32:23 +0800
+Subject: [PATCH] helm fix
 
 ---
- internal/helm/controller/reconcile.go | 26 +++++++++++++------
- internal/helm/internal/types/types.go |  4 +--
- internal/helm/release/manager.go      | 36 ++++++++++++++++++++++++++-
- 3 files changed, 55 insertions(+), 11 deletions(-)
+ internal/helm/controller/reconcile.go | 26 ++++++++++++++++++--------
+ internal/helm/internal/types/types.go |  4 ++--
+ internal/helm/release/manager.go      |  7 ++++++-
+ 3 files changed, 26 insertions(+), 11 deletions(-)
 
 diff --git a/internal/helm/controller/reconcile.go b/internal/helm/controller/reconcile.go
 index 3917f86d..16d33ef8 100644
@@ -95,10 +95,10 @@ index b816b57b..506ea6c6 100644
  
  const (
 diff --git a/internal/helm/release/manager.go b/internal/helm/release/manager.go
-index 2d494f42..9ebf638b 100644
+index 9489d377..da36b92f 100644
 --- a/internal/helm/release/manager.go
 +++ b/internal/helm/release/manager.go
-@@ -57,6 +57,7 @@ type Manager interface {
+@@ -58,6 +58,7 @@ type Manager interface {
  	ReconcileRelease(context.Context) (*rpb.Release, error)
  	UninstallRelease(context.Context, ...UninstallOption) (*rpb.Release, error)
  	CleanupRelease(context.Context, string) (bool, error)
@@ -106,54 +106,22 @@ index 2d494f42..9ebf638b 100644
  }
  
  type manager struct {
-@@ -130,10 +131,17 @@ func (m *manager) Sync(ctx context.Context) error {
- 	if err != nil {
- 		return fmt.Errorf("failed to get candidate release: %w", err)
- 	}
--	if deployedRelease.Manifest != candidateRelease.Manifest {
-+
-+	// if deployedRelease.Manifest != candidateRelease.Manifest {
-+	// 	m.isUpgradeRequired = true
-+	// }
-+
-+	if !compareHelmRelease(deployedRelease, candidateRelease) {
- 		m.isUpgradeRequired = true
- 	}
+@@ -143,7 +144,7 @@ func (m manager) isUpgrade(deployedRelease *rpb.Release) bool {
+ 	// Judging whether to skip updates
+ 	skip := m.namespace == deployedRelease.Namespace
+ 	skip = skip && m.releaseName == deployedRelease.Name
+-	skip = skip && apiequality.Semantic.DeepEqual(m.chart, deployedRelease.Chart)
++	skip = skip && m.chart.AppVersion() == deployedRelease.Chart.AppVersion()
+ 	skip = skip && apiequality.Semantic.DeepEqual(m.values, deployedRelease.Config)
  
-+	deployedRelease.Manifest = candidateRelease.Manifest
-+
- 	return nil
- }
- 
-@@ -414,3 +422,29 @@ func (m manager) CleanupRelease(ctx context.Context, manifest string) (bool, err
+ 	return !skip
+@@ -414,3 +415,7 @@ func (m manager) CleanupRelease(ctx context.Context, manifest string) (bool, err
  	}
  	return true, nil
  }
 +
 +func (m manager) GetDeployedManifest() string {
 +	return m.deployedRelease.Manifest
-+}
-+
-+func compareHelmRelease(deployedRelease *rpb.Release, candidateRelease *rpb.Release) bool {
-+	a, err := json.Marshal(deployedRelease.Config)
-+	if err != nil {
-+		return false
-+	}
-+
-+	b, err := json.Marshal(candidateRelease.Config)
-+	if err != nil {
-+		return false
-+	}
-+
-+	if string(a) != string(b) {
-+		return false
-+	}
-+
-+	if deployedRelease.Chart.AppVersion() != candidateRelease.Chart.AppVersion() {
-+		return false
-+	}
-+
-+	return true
 +}
 -- 
 2.25.1
