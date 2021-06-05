@@ -1,5 +1,5 @@
 # Build the manager binary
-FROM --platform=$BUILDPLATFORM golang:1.15 as builder
+FROM --platform=$BUILDPLATFORM golang:1.16 as builder
 ARG TARGETARCH
 
 WORKDIR /workspace
@@ -17,17 +17,17 @@ COPY . .
 RUN GOOS=linux GOARCH=$TARGETARCH make build/ansible-operator
 
 # Final image.
-FROM quay.io/operator-framework/ansible-operator-base:v1.6.x-ce34186d53201446db17dc8c3498f035130498d8
+FROM quay.io/operator-framework/ansible-operator-base:master-1851810cadc2bfeeb106d8fcaad43f3d6d6d817c
 
 ENV HOME=/opt/ansible \
-    USER_NAME=ansible \
-    USER_UID=1001
+  USER_NAME=ansible \
+  USER_UID=1001
 
 # Ensure directory permissions are properly set
-RUN echo "${USER_NAME}:x:${USER_UID}:0:${USER_NAME} user:${HOME}:/sbin/nologin" >> /etc/passwd \
-  && mkdir -p ${HOME}/.ansible/tmp \
-  && chown -R ${USER_UID}:0 ${HOME} \
-  && chmod -R ug+rwx ${HOME}
+RUN echo "${USER_NAME}:x:${USER_UID}:0:${USER_NAME} user:${HOME}:/sbin/nologin" >>/etc/passwd &&
+  mkdir -p ${HOME}/.ansible/tmp &&
+  chown -R ${USER_UID}:0 ${HOME} &&
+  chmod -R ug+rwx ${HOME}
 
 WORKDIR ${HOME}
 USER ${USER_UID}

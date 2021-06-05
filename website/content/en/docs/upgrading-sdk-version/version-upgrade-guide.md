@@ -10,7 +10,6 @@ For some versions it might also be necessary to update the upstream Kubernetes a
 
 The full list of dependencies and their versions required by a particular version of the SDK can be viewed by using the [`operator-sdk print-deps`][print-deps-cli] command. Use this command to update the project `Gopkg.toml`/`go.mod` file accordingly as you upgrade to a new SDK version.
 
-
 For some SDK versions after `v0.1.0` there might be minor breaking changes in the controller-runtime APIs, `operator-sdk` CLI or the expected project layout and file names. These breaking changes will usually be outlined in the [CHANGELOG][changelog]/[release-notes][release-notes] for each release version.
 
 For releases that have a large number of breaking changes or involve a significant refactoring of the APIs and project layout there will be a migration guide similar to the [v0.1.0 migration guide][v0.1.0-migration-guide].
@@ -32,27 +31,27 @@ The following sections outline the upgrade steps for each SDK version along with
   ```TOML
   [[override]]
     name = "k8s.io/code-generator"
-    **revision for tag "kubernetes-1.12.3"**
+    # **revision for tag "kubernetes-1.12.3"**
     revision = "3dcf91f64f638563e5106f21f50c31fa361c918d"
 
   [[override]]
     name = "k8s.io/api"
-    **revision for tag "kubernetes-1.12.3"**
+    # **revision for tag "kubernetes-1.12.3"**
     revision = "b503174bad5991eb66f18247f52e41c3258f6348"
 
   [[override]]
     name = "k8s.io/apiextensions-apiserver"
-    **revision for tag "kubernetes-1.12.3"**
+    # **revision for tag "kubernetes-1.12.3"**
     revision = "0cd23ebeb6882bd1cdc2cb15fc7b2d72e8a86a5b"
 
   [[override]]
     name = "k8s.io/apimachinery"
-    **revision for tag "kubernetes-1.12.3"**
+    # **revision for tag "kubernetes-1.12.3"**
     revision = "eddba98df674a16931d2d4ba75edc3a389bf633a"
 
   [[override]]
     name = "k8s.io/client-go"
-    **revision for tag "kubernetes-1.12.3"**
+    # **revision for tag "kubernetes-1.12.3"**
     revision = "d082d5923d3cc0bfbb066ee5fbdea3d0ca79acf8"
 
   [[override]]
@@ -79,27 +78,27 @@ The following sections outline the upgrade steps for each SDK version along with
   ```TOML
   [[override]]
     name = "k8s.io/code-generator"
-    **revision for tag "kubernetes-1.13.1"**
+    # **revision for tag "kubernetes-1.13.1"**
     revision = "c2090bec4d9b1fb25de3812f868accc2bc9ecbae"
 
   [[override]]
     name = "k8s.io/api"
-    **revision for tag "kubernetes-1.13.1"**
+    # **revision for tag "kubernetes-1.13.1"**
     revision = "05914d821849570fba9eacfb29466f2d8d3cd229"
 
   [[override]]
     name = "k8s.io/apiextensions-apiserver"
-    **revision for tag "kubernetes-1.13.1"**
+    # **revision for tag "kubernetes-1.13.1"**
     revision = "0fe22c71c47604641d9aa352c785b7912c200562"
 
   [[override]]
     name = "k8s.io/apimachinery"
-    **revision for tag "kubernetes-1.13.1"**
+    # **revision for tag "kubernetes-1.13.1"**
     revision = "2b1284ed4c93a43499e781493253e2ac5959c4fd"
 
   [[override]]
     name = "k8s.io/client-go"
-    **revision for tag "kubernetes-1.13.1"**
+    # **revision for tag "kubernetes-1.13.1"**
     revision = "8d9ed539ba3134352c586810e749e58df4e94e4f"
 
   [[override]]
@@ -286,19 +285,19 @@ Upon updating the project to `v0.8.2` the following breaking changes apply:
   ```TOML
   [[override]]
     name = "k8s.io/api"
-    **revision for tag "kubernetes-1.13.4"**
+    # **revision for tag "kubernetes-1.13.4"**
     revision = "5cb15d34447165a97c76ed5a60e4e99c8a01ecfe"
   [[override]]
     name = "k8s.io/apiextensions-apiserver"
-    **revision for tag "kubernetes-1.13.4"**
+    # **revision for tag "kubernetes-1.13.4"**
     revision = "d002e88f6236312f0289d9d1deab106751718ff0"
   [[override]]
     name = "k8s.io/apimachinery"
-    **revision for tag "kubernetes-1.13.4"**
+    # **revision for tag "kubernetes-1.13.4"**
     revision = "86fb29eff6288413d76bd8506874fddd9fccdff0"
   [[override]]
     name = "k8s.io/client-go"
-    **revision for tag "kubernetes-1.13.4"**
+    # **revision for tag "kubernetes-1.13.4"**
     revision = "b40b2a5939e43f7ffe0028ad67586b7ce50bb675"
   [[override]]
     name = "github.com/coreos/prometheus-operator"
@@ -380,19 +379,19 @@ Upon updating the project to `v0.8.2` the following breaking changes apply:
     ```TOML
     [[override]]
       name = "k8s.io/api"
-      **revision for tag "kubernetes-1.14.1"**
+      # **revision for tag "kubernetes-1.14.1"**
       revision = "6e4e0e4f393bf5e8bbff570acd13217aa5a770cd"
     [[override]]
       name = "k8s.io/apiextensions-apiserver"
-      **revision for tag "kubernetes-1.14.1"**
+      # **revision for tag "kubernetes-1.14.1"**
       revision = "727a075fdec8319bf095330e344b3ccc668abc73"
     [[override]]
       name = "k8s.io/apimachinery"
-      **revision for tag "kubernetes-1.14.1"**
+      # **revision for tag "kubernetes-1.14.1"**
       revision = "6a84e37a896db9780c75367af8d2ed2bb944022e"
     [[override]]
       name = "k8s.io/client-go"
-      **revision for tag "kubernetes-1.14.1"**
+      # **revision for tag "kubernetes-1.14.1"**
       revision = "1a26190bd76a9017e289958b9fba936430aa3704"
     [[override]]
       name = "github.com/coreos/prometheus-operator"
@@ -465,7 +464,7 @@ All method signatures for [`sigs.k8s.io/controller-runtime/pkg/client.Client`](h
     with:
     ```go
     listOpts := []client.ListOption{
-      client.InNamespace("namespace"),        
+      client.InNamespace("namespace"),
     }
     err = r.client.List(context.TODO(), podList, listOpts...)
     ```
@@ -634,9 +633,9 @@ Replace `*` per verbs in order to solve the issue [671](https://github.com/opera
 
 - **Deprecated:** Deprecated the `operator-sdk generate openapi` command. CRD generation is still supported with `operator-sdk generate crds`. It is now recommended to use [openapi-gen](https://github.com/kubernetes/kube-openapi/tree/master/cmd/openapi-gen) directly for OpenAPI code generation. The `generate openapi` subcommand will be removed in a future release.
 - **Breaking change:** An existing CSV's `spec.customresourcedefinitions.owned` is now always overwritten except for each name, version, and kind on invoking olm-catalog gen-csv when Go API code annotations are present.
-- **Potentially Breaking change:** Be aware that there are potentially other breaking changes due to the controller-runtime and Kubernetes version be upgraded from `v0.4.0` to `v1.16.2, respectively. There may be breaking changes to Go client code due to both of those changes.
+- **Potentially Breaking change:** Be aware that there are potentially other breaking changes due to the controller-runtime and Kubernetes version be upgraded from `v0.4.0` to `v1.16.2`, respectively. There may be breaking changes to Go client code due to both of those changes.
 
-For further detailed information see [CHANGELOG](https://github.com/operator-framework/operator-sdk/blob/master/CHANGELOG.md#v0130)
+For further detailed information see [CHANGELOG](https://github.com/operator-framework/operator-sdk/blob/v0.14.0/CHANGELOG.md#v0130)
 
 ## `v0.14.x`
 
@@ -786,7 +785,7 @@ func addMetrics(ctx context.Context, cfg *rest.Config, namespace string) {
 
 **Deprecations**
 
-The `github.com/operator-framework/operator-sdk/pkg/restmapper` package was deprecated in favor of the `DynamicRESTMapper` implementation in [controller-runtime](https://godoc.org/github.com/kubernetes-sigs/controller-runtime/pkg/client/apiutil#NewDiscoveryRESTMapper). Users should migrate to controller-runtime's implementation, which is a drop-in replacement.
+The `github.com/operator-framework/operator-sdk/pkg/restmapper` package was deprecated in favor of the `DynamicRESTMapper` implementation in [controller-runtime](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/client/apiutil#NewDiscoveryRESTMapper). Users should migrate to controller-runtime's implementation, which is a drop-in replacement.
 
 Replace:
 ```
@@ -839,7 +838,7 @@ You can also use the fully-qualified name without declaring the collection:
 
 **Notable Changes**
 
-These notable changes contain just the most important user-facing changes. See the [CHANGELOG](https://github.com/operator-framework/operator-sdk/blob/master/CHANGELOG.md#v0141) for details of the release.
+These notable changes contain just the most important user-facing changes. See the [CHANGELOG](https://github.com/operator-framework/operator-sdk/blob/v0.15.0/CHANGELOG.md#v0141) for details of the release.
 
 **Ansible version update**
 
@@ -945,7 +944,7 @@ With:
 oprator-sdk run exec-entrypoint helm --watches-file=$HOME/watches.yaml
 ```
 
-See the [CHANGELOG](https://github.com/operator-framework/operator-sdk/blob/master/CHANGELOG.md#v0151) for details of the release.
+See the [CHANGELOG](https://github.com/operator-framework/operator-sdk/blob/v0.16.0/CHANGELOG.md#v0151) for details of the release.
 
 ## v0.16.x
 
@@ -1143,7 +1142,7 @@ func main() {
 	// Add support for MultiNamespace set in WATCH_NAMESPACE (e.g ns1,ns2)
 	// Note that this is not intended to be used for excluding namespaces, this is better done via a Predicate
 	// Also note that you may face performance issues when using this with a high number of namespaces.
-	// More Info: https://godoc.org/github.com/kubernetes-sigs/controller-runtime/pkg/cache#MultiNamespacedCacheBuilder
+	// More Info: https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/cache#MultiNamespacedCacheBuilder
 	if strings.Contains(namespace, ",") {
 		options.Namespace = ""
 		options.NewCache = cache.MultiNamespacedCacheBuilder(strings.Split(namespace, ","))
@@ -1341,7 +1340,7 @@ install:
   - pip3 install docker molecule ansible-lint yamllint flake8 openshift jmespath
 ```
 
-**NOTE** To know more about how to upgrade your project to use the V3 Molecule version see [here](https://github.com/ansible-community/molecule/issues/2560).  
+**NOTE** To know more about how to upgrade your project to use the V3 Molecule version see [here](https://github.com/ansible-community/molecule/issues/2560).
 
 **Deprecations**
 
@@ -1374,7 +1373,7 @@ first `COPY` from `COPY /*.yaml manifests/` to `COPY deploy/olm-catalog/<operato
 [migrating-to-modules]: https://github.com/golang/go/wiki/Modules#migrating-to-modules
 [modules-wiki]: https://github.com/golang/go/wiki/Modules#migrating-to-modules
 [print-deps-cli]: https://v0-19-x.sdk.operatorframework.io/docs/cli/operator-sdk_print-deps/
-[changelog]: https://github.com/operator-framework/operator-sdk/blob/master/CHANGELOG.md
+[changelog]: https://github.com/operator-framework/operator-sdk/blob/v1.3.0/CHANGELOG.md
 [release-notes]: https://github.com/operator-framework/operator-sdk/releases
 [v0.1.0-migration-guide]: ../v0.1.0-migration-guide
 [manifest-format]: https://github.com/operator-framework/operator-registry#manifest-format

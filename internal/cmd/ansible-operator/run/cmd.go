@@ -139,7 +139,7 @@ func run(cmd *cobra.Command, f *flags.Flags) {
 	namespace, found := os.LookupEnv(k8sutil.WatchNamespaceEnvVar)
 	log = log.WithValues("Namespace", namespace)
 	if found {
-		log.V(1).Info("Setting namespace with value in %s", k8sutil.WatchNamespaceEnvVar)
+		log.V(1).Info(fmt.Sprintf("Setting namespace with value in %s", k8sutil.WatchNamespaceEnvVar))
 		if namespace == metav1.NamespaceAll {
 			log.Info("Watching all namespaces.")
 			options.Namespace = metav1.NamespaceAll
@@ -207,7 +207,7 @@ func run(cmd *cobra.Command, f *flags.Flags) {
 			os.Exit(1)
 		}
 
-		cMap.Store(w.GroupVersionKind, &controllermap.Contents{Controller: *ctr,
+		cMap.Store(w.GroupVersionKind, &controllermap.Contents{Controller: *ctr, //nolint:staticcheck
 			WatchDependentResources:     w.WatchDependentResources,
 			WatchClusterScopedResources: w.WatchClusterScopedResources,
 			OwnerWatchMap:               controllermap.NewWatchMap(),

@@ -31,6 +31,7 @@ and <PROJECT VERSION> a supported project version for these plugins.
                 go.kubebuilder.io/v3 |                          3
     helm.sdk.operatorframework.io/v1 |                          3
   kustomize.common.kubebuilder.io/v1 |                          3
+ quarkus.javaoperatorsdk.io/v1-alpha |                          3
 
 For more specific help for the init command of a certain plugins and project version
 configuration please run:
@@ -61,6 +62,7 @@ Default project version: "3"
 * [operator-sdk generate](../operator-sdk_generate)	 - Invokes a specific generator
 * [operator-sdk init](../operator-sdk_init)	 - Initialize a new project
 * [operator-sdk olm](../operator-sdk_olm)	 - Manage the Operator Lifecycle Manager installation in your cluster
+* [operator-sdk pkgman-to-bundle](../operator-sdk_pkgman-to-bundle)	 - Migrates packagemanifests to bundles
 * [operator-sdk run](../operator-sdk_run)	 - Run an Operator in a variety of environments
 * [operator-sdk scorecard](../operator-sdk_scorecard)	 - Runs scorecard
 * [operator-sdk version](../operator-sdk_version)	 - Print the operator-sdk version

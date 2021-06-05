@@ -1,5 +1,5 @@
 # Build the custom-scorecard-tests binary
-FROM --platform=$BUILDPLATFORM golang:1.15 as builder
+FROM --platform=$BUILDPLATFORM golang:1.16 as builder
 ARG TARGETARCH
 
 WORKDIR /workspace
@@ -17,13 +17,13 @@ COPY . .
 RUN GOOS=linux GOARCH=$TARGETARCH make build/custom-scorecard-tests
 
 # Final image.
-FROM registry.access.redhat.com/ubi8/ubi-minimal:8.3-298
+FROM registry.access.redhat.com/ubi8/ubi-minimal:8.4
 
 ENV HOME=/opt/custom-scorecard-tests \
-    USER_NAME=custom-scorecard-tests \
-    USER_UID=1001
+  USER_NAME=custom-scorecard-tests \
+  USER_UID=1001
 
-RUN echo "${USER_NAME}:x:${USER_UID}:0:${USER_NAME} user:${HOME}:/sbin/nologin" >> /etc/passwd
+RUN echo "${USER_NAME}:x:${USER_UID}:0:${USER_NAME} user:${HOME}:/sbin/nologin" >>/etc/passwd
 
 WORKDIR ${HOME}
 

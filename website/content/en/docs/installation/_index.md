@@ -36,7 +36,7 @@ export OS=$(uname | awk '{print tolower($0)}')
 Download the binary for your platform:
 
 ```sh
-export OPERATOR_SDK_DL_URL=https://github.com/operator-framework/operator-sdk/releases/download/v1.6.2
+export OPERATOR_SDK_DL_URL=https://github.com/operator-framework/operator-sdk/releases/download/v1.8.0
 curl -LO ${OPERATOR_SDK_DL_URL}/operator-sdk_${OS}_${ARCH}
 ```
 
@@ -98,6 +98,6 @@ git checkout master
 make install
 ```
 
-[homebrew_tool]:https://brew.sh/
-[git_tool]:https://git-scm.com/downloads
-[go_tool]:https://golang.org/dl/
+[homebrew_tool]: https://brew.sh/
+[git_tool]: https://git-scm.com/downloads
+[go_tool]: https://golang.org/dl/
