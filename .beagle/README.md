@@ -1,10 +1,10 @@
 # remote
 
 ```bash
-# 2021.04.19
+# 2021.06.05
 git remote add upstream git@github.com:operator-framework/operator-sdk.git
 git fetch upstream
-git merge upstream/v1.6.x
+git merge v1.8.0
 ```
 
 ## build
